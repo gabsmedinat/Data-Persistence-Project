@@ -12,16 +12,20 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public Text PlayerText;
     
     private bool m_Started = false;
     private int m_Points;
+    public string p_Name;
+    public int topScore;
     
     private bool m_GameOver = false;
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
+        PlayerName(ManageScene.Instance.inputText);  // Calls function on which we extract player's input name from the ManageScene Instance
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -38,9 +42,13 @@ public class MainManager : MonoBehaviour
         }
     }
 
+    
+
     private void Update()
     {
-        if (!m_Started)
+        Quit();  // Call Quit Method function in the update method
+
+        if (!m_Started)  // To initialize the game without any movement (Spacebar begins)
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
@@ -55,6 +63,7 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -68,9 +77,39 @@ public class MainManager : MonoBehaviour
         ScoreText.text = $"Score : {m_Points}";
     }
 
+
+    void PlayerName(string player)
+    { 
+        p_Name = player;
+        PlayerText.text = $"Player: {p_Name}";
+    }
+
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        GetScore(m_Points);
+    }
+    public void GetScore(int points)
+    {   
+        
+        if (points > topScore)
+        {
+            topScore += points;
+        }
+        else
+        {
+            topScore = 0;
+        }
+        ManageScene.Instance.higherScore = topScore;
+    }
+
+
+    void Quit()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 }
